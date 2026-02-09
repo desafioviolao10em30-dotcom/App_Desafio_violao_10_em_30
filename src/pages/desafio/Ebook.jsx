@@ -1,201 +1,246 @@
-import React, { useState, useRef } from 'react';
-import {
-  BookOpen,
-  Download,
-  Music,
-  Guitar,
-  ChevronRight,
-  ChevronDown,
-  Sparkles,
-  MessageCircle,
-  ShoppingCart
-} from 'lucide-react';
-import { Button } from "@/components/ui/button";
-import { Link } from 'react-router-dom';
+import React, { useMemo, useRef, useState } from "react";
+import ReactMarkdown from "react-markdown";
 
-import ChordDiagram from '@/components/ebook/ChordDiagram';
-import RhythmPattern from '@/components/ebook/RhythmPattern';
-import SongCard from '@/components/ebook/SongCard';
-import GuitarDiagram from '@/components/ebook/GuitarDiagram';
-import TuningGuide from '@/components/ebook/TuningGuide';
-import VideoEmbed from '@/components/ebook/VideoEmbed';
-import ReactMarkdown from 'react-markdown';
-
-import { desafioModules, desafioSongs } from '@/data/desafio';
+/**
+ * Ebook simples (estático) para GitHub Pages
+ * - Sem Base44
+ * - Sem alias "@/..."
+ * - Sem componentes externos
+ */
 
 export default function Ebook() {
-  const [activeModule, setActiveModule] = useState(null);
   const contentRef = useRef(null);
+  const [activeModule, setActiveModule] = useState(1);
 
-  const modules = desafioModules;
-  const songs = desafioSongs;
+  const modules = useMemo(
+    () => [
+      {
+        id: 1,
+        title: "Boas-vindas e como usar o Desafio",
+        content: `
+## Bem-vindo(a) ao Desafio Violão 10 em 30 🎸
 
-  const songsByLevel = {
-    2: songs.filter(s => s.level === 2),
-    3: songs.filter(s => s.level === 3),
-    4: songs.filter(s => s.level === 4),
-    '5+': songs.filter(s => s.level >= 5),
-  };
+Nos próximos **30 dias**, você vai aprender a tocar **10 músicas reais** no violão, mesmo começando do zero.
 
-  const getModuleById = (id) =>
-    modules.find(m => m.id === id);
+### Como usar esse material
+- Assista às vídeo-aulas
+- Use este ebook como guia/consulta
+- Pratique pelo menos **20 minutos por dia**
+- Repita os trechos difíceis sem pressa
+        `.trim(),
+      },
+      {
+        id: 2,
+        title: "Partes do violão e afinação",
+        content: `
+## Partes do violão
+- Braço, escala, trastes
+- Tarraxas
+- Cavalete
+- Cordas
 
-  const getModuleVideo = (id) =>
-    getModuleById(id)?.videoUrl || null;
+## Afinação padrão (da 6ª para a 1ª corda)
+**E A D G B E**
+        `.trim(),
+      },
+      {
+        id: 3,
+        title: "Acordes básicos",
+        content: `
+## Acordes básicos (começo do Desafio)
+Aqui você foca em trocar acordes sem travar.
 
-  const getModuleContent = (id) =>
-    getModuleById(id)?.content || '';
+Sugestão inicial:
+- **Em**
+- **G**
+- **C**
+- **D**
+- **Am**
+        `.trim(),
+      },
+      {
+        id: 4,
+        title: "Ritmos essenciais",
+        content: `
+## Ritmos essenciais
+Comece lento. O ritmo “bonito” vem depois.
 
-  const getModuleInfoBoxes = (id) =>
-    getModuleById(id)?.infoBoxes || [];
+Dicas:
+- Mantenha a mão direita sempre em movimento
+- Treine com metrônomo (lento)
+- Faça 2 minutos por ritmo, todo dia
+        `.trim(),
+      },
+      {
+        id: 5,
+        title: "Músicas do Desafio (lista)",
+        content: `
+## As 10 músicas do Desafio
+Coloque aqui a lista oficial (você me manda depois e eu organizo bonito).
 
-  const handlePrint = () => {
+Enquanto isso, você pode inserir:
+1. Música 1
+2. Música 2
+3. Música 3
+...
+10. Música 10
+        `.trim(),
+      },
+      {
+        id: 6,
+        title: "Conclusão e próximos passos",
+        content: `
+## Parabéns! ✅
+
+Se você fez o Desafio, você já tem base real:
+- acordes
+- ritmo
+- troca
+- constância
+
+Próximo passo: continuar evoluindo com direção (mentoria / comunidade).
+        `.trim(),
+      },
+    ],
+    []
+  );
+
+  function handlePrint() {
     window.print();
-  };
+  }
 
   return (
-    <div className="min-h-screen py-8 px-4" ref={contentRef}>
-      <div className="max-w-5xl mx-auto">
-
-        {/* Header */}
-        <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-yellow-500/20 rounded-full mb-4">
-            <BookOpen className="w-4 h-4 text-yellow-400" />
-            <span className="text-yellow-400 text-sm font-medium">Ebook de Apoio</span>
-          </div>
-          <h1 className="text-3xl md:text-4xl font-black text-white mb-2">
-            DESAFIO VIOLÃO <span className="text-green-400">10</span> em{' '}
-            <span className="text-green-400">30</span>
+    <div ref={contentRef} style={styles.page}>
+      <div style={styles.container}>
+        <div style={styles.header}>
+          <div style={styles.badge}>📘 Ebook de Apoio</div>
+          <h1 style={styles.h1}>
+            DESAFIO VIOLÃO <span style={{ color: "#22c55e" }}>10</span> em{" "}
+            <span style={{ color: "#22c55e" }}>30</span>
           </h1>
-          <p className="text-purple-200">
-            Ebook de apoio às vídeo-aulas do curso on-line
-          </p>
+          <p style={styles.subtitle}>Ebook de apoio às vídeo-aulas do curso</p>
 
-          <Button
-            onClick={handlePrint}
-            className="mt-6 bg-gradient-to-r from-yellow-500 to-yellow-600 text-purple-900 font-bold px-6 py-3 rounded-xl"
-          >
-            <Download className="w-5 h-5 mr-2" />
-            Baixar PDF do Conteúdo
-          </Button>
+          <button onClick={handlePrint} style={styles.printBtn}>
+            ⬇️ Baixar PDF do Conteúdo
+          </button>
         </div>
 
-        {/* Módulos */}
-        <div className="space-y-4">
-          {modules.map((module) => (
-            <div
-              key={module.id}
-              className="bg-purple-800/30 rounded-2xl border border-purple-700/50 overflow-hidden"
-            >
-              <button
-                onClick={() =>
-                  setActiveModule(activeModule === module.id ? null : module.id)
-                }
-                className="w-full flex items-center justify-between p-5 hover:bg-purple-700/20"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center">
-                    <BookOpen className="w-6 h-6 text-white" />
-                  </div>
-                  <div className="text-left">
-                    <p className="text-xs text-purple-400 uppercase">
-                      Módulo {module.id}
-                    </p>
-                    <h3 className="text-lg font-bold text-white">
-                      {module.title}
-                    </h3>
-                  </div>
-                </div>
-                <ChevronDown
-                  className={`w-6 h-6 text-purple-300 transition-transform ${
-                    activeModule === module.id ? 'rotate-180' : ''
-                  }`}
-                />
-              </button>
-
-              {activeModule === module.id && (
-                <div className="px-5 pb-6 border-t border-purple-700/50">
-                  <div className="pt-6 space-y-6">
-
-                    {getModuleVideo(module.id) && (
-                      <VideoEmbed
-                        videoUrl={getModuleVideo(module.id)}
-                        title={module.title}
-                      />
-                    )}
-
-                    {getModuleContent(module.id) && (
-                      <div className="bg-purple-900/50 rounded-xl p-6 border border-purple-700">
-                        <div className="prose prose-invert max-w-none">
-                          <ReactMarkdown>
-                            {getModuleContent(module.id)}
-                          </ReactMarkdown>
-                        </div>
-                      </div>
-                    )}
-
-                    {getModuleInfoBoxes(module.id).length > 0 && (
-                      <div className="grid md:grid-cols-2 gap-6">
-                        {getModuleInfoBoxes(module.id).map((box, idx) => (
-                          <div
-                            key={idx}
-                            className="bg-purple-900/50 rounded-xl p-6 border border-purple-700"
-                          >
-                            <h3 className="text-xl font-bold text-yellow-400 mb-4">
-                              {box.title}
-                            </h3>
-                            {box.content && (
-                              <p className="text-white">{box.content}</p>
-                            )}
-                            {box.items && (
-                              <ul className="mt-4 space-y-2 text-white">
-                                {box.items.map((item, i) => (
-                                  <li key={i} className="flex gap-2">
-                                    <ChevronRight className="w-4 h-4 text-green-400 mt-1" />
-                                    {item}
-                                  </li>
-                                ))}
-                              </ul>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    )}
-
-                    {module.id === 5 && (
-                      <>
-                        {[2, 3, 4, '5+'].map(level => (
-                          songsByLevel[level]?.length > 0 && (
-                            <div key={level}>
-                              <h3 className="text-xl font-bold text-yellow-400 mb-4">
-                                Músicas nível {level}
-                              </h3>
-                              <div className="grid md:grid-cols-2 gap-4">
-                                {songsByLevel[level].map(song => (
-                                  <SongCard key={song.id} {...song} />
-                                ))}
-                              </div>
-                            </div>
-                          )
-                        ))}
-                      </>
-                    )}
-
-                  </div>
-                </div>
-              )}
+        <div style={styles.layout}>
+          {/* menu */}
+          <aside style={styles.aside}>
+            <h3 style={styles.asideTitle}>Sumário</h3>
+            <div style={{ display: "grid", gap: 8 }}>
+              {modules.map((m) => (
+                <button
+                  key={m.id}
+                  onClick={() => setActiveModule(m.id)}
+                  style={{
+                    ...styles.moduleBtn,
+                    ...(activeModule === m.id ? styles.moduleBtnActive : {}),
+                  }}
+                >
+                  <span style={styles.moduleId}>Módulo {m.id}</span>
+                  <span style={styles.moduleTitle}>{m.title}</span>
+                </button>
+              ))}
             </div>
-          ))}
-        </div>
+          </aside>
 
-        {/* Footer */}
-        <div className="mt-12 text-center py-6 border-t border-purple-700/50">
-          <p className="text-yellow-400 font-semibold">
-            "Do zero às suas primeiras 10 músicas em 30 dias – Aqui Você é Capaz!"
-          </p>
-        </div>
+          {/* conteúdo */}
+          <main style={styles.main}>
+            <div style={styles.card}>
+              <h2 style={styles.h2}>
+                Módulo {activeModule} —{" "}
+                {modules.find((m) => m.id === activeModule)?.title}
+              </h2>
+              <div style={styles.markdown}>
+                <ReactMarkdown>
+                  {modules.find((m) => m.id === activeModule)?.content || ""}
+                </ReactMarkdown>
+              </div>
+            </div>
 
+            <div style={styles.footer}>
+              <p style={styles.footerText}>
+                “Do zero às suas primeiras 10 músicas em 30 dias – Aqui Você é Capaz!”
+              </p>
+            </div>
+          </main>
+        </div>
       </div>
     </div>
   );
 }
+
+const styles = {
+  page: {
+    minHeight: "100vh",
+    background: "linear-gradient(180deg, #1a0630 0%, #0f0f10 100%)",
+    color: "#fff",
+    padding: "24px 16px",
+    fontFamily: "Arial, Helvetica, sans-serif",
+  },
+  container: { maxWidth: 1100, margin: "0 auto" },
+  header: { textAlign: "center", marginBottom: 20 },
+  badge: {
+    display: "inline-block",
+    padding: "8px 12px",
+    borderRadius: 999,
+    background: "rgba(234,179,8,0.18)",
+    color: "#facc15",
+    fontWeight: 700,
+    marginBottom: 10,
+  },
+  h1: { fontSize: 32, margin: "0 0 8px", fontWeight: 900 },
+  subtitle: { margin: 0, color: "#c4b5fd" },
+  printBtn: {
+    marginTop: 14,
+    padding: "12px 16px",
+    borderRadius: 14,
+    border: "none",
+    cursor: "pointer",
+    fontWeight: 800,
+    background: "linear-gradient(90deg,#facc15,#eab308)",
+    color: "#1a0630",
+  },
+  layout: { display: "grid", gridTemplateColumns: "280px 1fr", gap: 16 },
+  aside: {
+    background: "rgba(88,28,135,0.25)",
+    border: "1px solid rgba(168,85,247,0.25)",
+    borderRadius: 16,
+    padding: 14,
+    height: "fit-content",
+  },
+  asideTitle: { margin: "0 0 10px", color: "#facc15" },
+  moduleBtn: {
+    textAlign: "left",
+    borderRadius: 14,
+    border: "1px solid rgba(168,85,247,0.25)",
+    padding: "10px 12px",
+    background: "rgba(0,0,0,0.25)",
+    color: "#fff",
+    cursor: "pointer",
+  },
+  moduleBtnActive: {
+    outline: "2px solid rgba(34,197,94,0.55)",
+    background: "rgba(34,197,94,0.12)",
+  },
+  moduleId: { display: "block", fontSize: 12, color: "#a78bfa", fontWeight: 800 },
+  moduleTitle: { display: "block", fontSize: 14, fontWeight: 800, marginTop: 2 },
+  main: { minWidth: 0 },
+  card: {
+    background: "rgba(88,28,135,0.2)",
+    border: "1px solid rgba(168,85,247,0.25)",
+    borderRadius: 16,
+    padding: 16,
+  },
+  h2: { margin: "0 0 12px", color: "#facc15" },
+  markdown: { color: "#e9d5ff", lineHeight: 1.6 },
+  footer: {
+    marginTop: 16,
+    textAlign: "center",
+    padding: "14px 10px",
+    borderTop: "1px solid rgba(168,85,247,0.25)",
+  },
+  footerText: { margin: 0, color: "#facc15", fontWeight: 800 },
+};
