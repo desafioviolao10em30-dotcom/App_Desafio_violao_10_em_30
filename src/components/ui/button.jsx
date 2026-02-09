@@ -1,9 +1,8 @@
 import React from "react";
-import clsx from "clsx";
 
-export function Button({ className, variant = "default", ...props }) {
+export function Button({ className = "", variant = "default", ...props }) {
   const base =
-    "inline-flex items-center justify-center rounded-lg px-4 py-2 font-semibold transition";
+    "inline-flex items-center justify-center rounded-xl px-6 py-3 font-bold transition";
   const variants = {
     default: "bg-green-500 text-black hover:bg-green-400",
     secondary: "bg-blue-600 text-white hover:bg-blue-500",
@@ -11,9 +10,7 @@ export function Button({ className, variant = "default", ...props }) {
   };
 
   return (
-    <button
-      className={clsx(base, variants[variant] || variants.default, className)}
-      {...props}
-    />
+    <button className={`${base} ${variants[variant] || variants.default} ${className}`} {...props} />
   );
 }
+
