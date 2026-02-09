@@ -5,7 +5,7 @@ export default defineConfig({
   plugins: [react()],
   base: '/App_Desafio_violao_10_em_30/',
   build: {
-    outDir: 'dist',
+    outDir: 'docs',
     emptyOutDir: true
   }
 })
