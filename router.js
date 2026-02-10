@@ -1,32 +1,37 @@
-// router.js — HASH ROUTER COM SUPORTE A ASYNC (ESTÁVEL)
+// router.js
+const routes = {
+  "/home": () => import("./pages/home.js"),
+  "/ebook": () => import("./pages/ebook.js"),
+  "/comunidade": () => import("./pages/comunidade.js"),
+  "/mentoria": () => import("./pages/mentoria.js"),
+  "/obrigado": () => import("./pages/obrigado.js"),
+};
 
-const routes = {};
-
-export function registerRoute(path, renderFn) {
-  routes[path] = renderFn;
-}
+const view = () => document.getElementById("view");
 
 async function loadRoute() {
-  const view = document.getElementById('view');
-  const hash = window.location.hash || '#/home';
-  const path = hash.replace('#', '');
+  const hash = window.location.hash || "#/home";
+  const path = hash.replace("#", "");
 
-  const render = routes[path] || routes['/home'];
+  const loader = routes[path] || routes["/home"];
 
   try {
-    const result = render();
-    view.innerHTML = result instanceof Promise ? await result : result;
+    const page = await loader();
+
+    // 👇 AQUI ESTÁ A CORREÇÃO PRINCIPAL
+    const html = await page.render();
+    view().innerHTML = html;
+
+    if (page.afterRender) {
+      page.afterRender();
+    }
   } catch (err) {
     console.error(err);
-    view.innerHTML = `
-      <div class="card">
-        <h2>Erro ao carregar página</h2>
-      </div>
-    `;
+    view().innerHTML = `<h2>Erro ao carregar página</h2>`;
   }
 }
 
 export function initRouter() {
-  window.addEventListener('hashchange', loadRoute);
+  window.addEventListener("hashchange", loadRoute);
   loadRoute();
 }
