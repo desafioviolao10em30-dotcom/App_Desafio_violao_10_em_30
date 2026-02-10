@@ -1,44 +1,35 @@
-/* ===== COMUNIDADE ===== */
-
-.community-wrapper {
+.community-wrap {
   max-width: 900px;
   margin: 40px auto;
-  display: grid;
-  gap: 30px;
+  padding: 0 16px;
 }
 
 .community-card {
-  background: linear-gradient(180deg, #1b0938, #120626);
-  border-radius: 20px;
-  padding: 30px;
-  box-shadow: 0 15px 40px rgba(0,0,0,.35);
+  background: var(--card);
+  border-radius: 18px;
+  padding: 28px;
+  margin-bottom: 28px;
+  box-shadow: 0 20px 40px rgba(0,0,0,.35);
 }
 
 .community-card h1,
 .community-card h2 {
-  color: #facc15;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 .subtitle {
-  color: #c4b5fd;
+  color: var(--muted);
   margin-bottom: 20px;
-}
-
-.form {
-  display: grid;
-  gap: 14px;
 }
 
 .form input,
 .form textarea {
   width: 100%;
-  padding: 14px 16px;
-  border-radius: 12px;
+  margin-bottom: 14px;
+  padding: 14px;
+  border-radius: 10px;
   border: none;
-  font-size: 16px;
-  background: #0f0320;
-  color: #fff;
+  font-size: 15px;
 }
 
 .form textarea {
@@ -46,60 +37,21 @@
   resize: vertical;
 }
 
-.form button {
-  margin-top: 10px;
+.btn-primary {
+  width: 100%;
   padding: 14px;
-  border-radius: 14px;
+  border-radius: 12px;
   border: none;
+  cursor: pointer;
   font-size: 16px;
   font-weight: 800;
-  cursor: pointer;
-  background: linear-gradient(90deg, #facc15, #fde047);
+  background: linear-gradient(90deg, var(--gold), #fde047);
   color: #3b2500;
 }
 
-.mural {
-  padding-top: 20px;
-}
-
-.questions {
-  display: grid;
-  gap: 16px;
-}
-
 .question-card {
-  background: rgba(255,255,255,.05);
-  border-radius: 14px;
-  padding: 18px;
-}
-
-.question-card strong {
-  color: #a78bfa;
-}
-
-.question-card p {
-  margin: 6px 0 10px;
-}
-
-.answer {
-  background: rgba(34,197,94,.12);
-  border-left: 4px solid #22c55e;
-  padding: 10px 14px;
-  border-radius: 8px;
-}
-
-.answer span {
-  font-weight: 700;
-  color: #22c55e;
-}
-
-.answer small {
-  display: block;
-  opacity: .7;
-  margin-top: 4px;
-}
-
-.pending {
-  opacity: .6;
-  font-style: italic;
+  background: rgba(255,255,255,0.04);
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 12px;
 }
