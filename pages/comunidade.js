@@ -1,10 +1,10 @@
-import { supabase } from "../js/supabase.js";
+import { supabase } from "../supabase.js";
 
 export function render() {
   return `
     <section class="page-wrap">
 
-      <div class="card card--highlight">
+      <div class="card">
         <h1 class="title-xl">💬 Comunidade do Desafio</h1>
         <p class="muted">
           Envie sua dúvida abaixo. Ela aparecerá no mural e será respondida pelo instrutor.
@@ -28,10 +28,10 @@ export function render() {
         </button>
       </div>
 
-      <div class="card">
-        <h2 class="title-md">📌 Mural de Perguntas</h2>
+      <div class="card" style="margin-top:24px;">
+        <h2>📌 Mural de Perguntas</h2>
         <div id="questionsList" class="questions-list">
-          Carregando perguntas...
+          <p class="muted">Carregando perguntas...</p>
         </div>
       </div>
 
@@ -39,48 +39,12 @@ export function render() {
   `;
 }
 
-export async function mount() {
-  loadQuestions();
-
+export function mount() {
   document
     .getElementById("sendQuestion")
     .addEventListener("click", sendQuestion);
-}
 
-/* ---------------- FUNCTIONS ---------------- */
-
-async function loadQuestions() {
-  const list = document.getElementById("questionsList");
-
-  const { data, error } = await supabase
-    .from("questions")
-    .select("id, student_name, question, created_at")
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    list.innerHTML = "Erro ao carregar perguntas.";
-    console.error(error);
-    return;
-  }
-
-  if (!data.length) {
-    list.innerHTML = "<p class='muted'>Nenhuma dúvida enviada ainda.</p>";
-    return;
-  }
-
-  list.innerHTML = data
-    .map(
-      (q) => `
-      <div class="question-card">
-        <div class="question-header">
-          <strong>${q.student_name || "Aluno"}</strong>
-          <span>${formatDate(q.created_at)}</span>
-        </div>
-        <p>${q.question}</p>
-      </div>
-    `
-    )
-    .join("");
+  loadQuestions();
 }
 
 async function sendQuestion() {
@@ -92,14 +56,16 @@ async function sendQuestion() {
     return;
   }
 
-  const { error } = await supabase.from("questions").insert({
-    student_name: name || "Aluno",
-    question: text,
-  });
+  const { error } = await supabase.from("questions").insert([
+    {
+      student_name: name || "Aluno",
+      question: text,
+    },
+  ]);
 
   if (error) {
-    alert("Erro ao enviar dúvida.");
     console.error(error);
+    alert("Erro ao enviar dúvida.");
     return;
   }
 
@@ -107,6 +73,36 @@ async function sendQuestion() {
   loadQuestions();
 }
 
-function formatDate(date) {
-  return new Date(date).toLocaleDateString("pt-BR");
+async function loadQuestions() {
+  const list = document.getElementById("questionsList");
+
+  const { data, error } = await supabase
+    .from("questions")
+    .select("student_name, question, created_at")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error(error);
+    list.innerHTML = "<p class='muted'>Erro ao carregar perguntas.</p>";
+    return;
+  }
+
+  if (!data.length) {
+    list.innerHTML = "<p class='muted'>Nenhuma dúvida enviada ainda.</p>";
+    return;
+  }
+
+  list.innerHTML = data
+    .map(
+      (q) => `
+        <div class="question-item">
+          <strong>${q.student_name || "Aluno"}</strong>
+          <span class="date">
+            ${new Date(q.created_at).toLocaleDateString("pt-BR")}
+          </span>
+          <p>${q.question}</p>
+        </div>
+      `
+    )
+    .join("");
 }
