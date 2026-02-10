@@ -1,5 +1,16 @@
 // pages/ebook.js
 
+let activeModule = null;
+
+function toggleModule(id) {
+  activeModule = activeModule === id ? null : id;
+  const view = document.getElementById("view");
+  view.innerHTML = render();
+}
+
+// expõe no escopo global
+window.toggleModule = toggleModule;
+
 export function render() {
   const data = window.DESAFIO_DATA || {};
 
@@ -7,16 +18,9 @@ export function render() {
   const songs = data.songs || [];
   const mentoria = data.mentoria;
 
-  let activeModule = null;
-
-  function toggleModule(id) {
-    activeModule = activeModule === id ? null : id;
-    document.getElementById("ebook-view").innerHTML = render();
-  }
-
   function renderSongs(level) {
     return songs
-      .filter(s => level === "5+" ? s.level >= 5 : s.level === level)
+      .filter(s => (level === "5+" ? s.level >= 5 : s.level === level))
       .map(song => `
         <div class="song-card">
           <strong>${song.title}</strong>
@@ -32,7 +36,7 @@ export function render() {
   }
 
   return `
-    <section id="ebook-view" class="ebook">
+    <section class="ebook">
 
       <header class="ebook-header">
         <span class="badge">📘 Ebook Interativo</span>
@@ -44,7 +48,7 @@ export function render() {
       <div class="modules">
         ${modules.map(m => `
           <div class="module">
-            <button class="module-header" onclick="(${toggleModule})(${m.id})">
+            <button class="module-header" onclick="window.toggleModule(${m.id})">
               <div>
                 <small>Módulo ${m.id}</small>
                 <strong>${m.title}</strong>
@@ -68,7 +72,7 @@ export function render() {
                     ${m.infoBoxes?.map(box => `
                       <div class="info-box">
                         <h4>${box.title}</h4>
-                        <p>${box.content || ""}</p>
+                        ${box.content ? `<p>${box.content}</p>` : ""}
                         ${box.items ? `
                           <ul>
                             ${box.items.map(i => `<li>${i}</li>`).join("")}
