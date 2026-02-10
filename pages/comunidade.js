@@ -5,7 +5,7 @@ export function render() {
     <section class="page-wrap">
 
       <div class="card">
-        <h1 class="title-xl">💬 Comunidade do Desafio</h1>
+        <h1 class="title-xl""gold-title">💬 Comunidade do Desafio</h1>
         <p class="muted">
           Envie sua dúvida abaixo. Ela aparecerá no mural e será respondida pelo instrutor.
         </p>
@@ -23,13 +23,13 @@ export function render() {
           placeholder="Digite sua dúvida..."
         ></textarea>
 
-        <button id="sendQuestion" class="btn btn-yellow">
+        <button id="sendQuestion" class="btn btn-yellow""btn-gold">
           Enviar dúvida
         </button>
       </div>
 
       <div class="card" style="margin-top:24px;">
-        <h2>📌 Mural de Perguntas</h2>
+        <h2 class="gold-title">📌Mural de Perguntas</h2>
         <div id="questionsList" class="questions-list">
           <p class="muted">Carregando perguntas...</p>
         </div>
