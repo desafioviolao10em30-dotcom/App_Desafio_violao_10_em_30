@@ -1,78 +1,7 @@
-// pages/comunidade.js
 import { supabase } from '../supabase.js';
 
 export async function render() {
-  return `
-    <section class="card community">
-      <h1>💬 Comunidade do Desafio</h1>
-      <p class="subtitle">
-        Envie sua dúvida abaixo. Ela aparecerá no mural e será respondida por mim.
-      </p>
-
-      <div class="form">
-        <input
-          id="studentName"
-          type="text"
-          placeholder="Seu nome"
-          value="Magno"
-        />
-
-        <textarea
-          id="questionText"
-          placeholder="Digite sua dúvida..."
-          rows="4"
-        ></textarea>
-
-        <button id="sendQuestion" class="button primary">
-          Enviar dúvida
-        </button>
-      </div>
-
-      <hr />
-
-      <h2>📌 Mural de Perguntas</h2>
-      <div id="questionsList">Carregando perguntas...</div>
-    </section>
-  `;
-}
-
-export async function afterRender() {
-  const button = document.getElementById('sendQuestion');
-  button.addEventListener('click', sendQuestion);
-
-  await loadQuestions();
-}
-
-async function sendQuestion() {
-  const name = document.getElementById('studentName').value.trim();
-  const question = document.getElementById('questionText').value.trim();
-
-  if (!name || !question) {
-    alert('Preencha seu nome e a dúvida.');
-    return;
-  }
-
-  const { error } = await supabase
-    .from('questions')
-    .insert([
-      {
-        student_name: name,
-        question: question
-      }
-    ]);
-
-  if (error) {
-    console.error(error);
-    alert('Erro ao enviar dúvida.');
-    return;
-  }
-
-  document.getElementById('questionText').value = '';
-  await loadQuestions();
-}
-
-async function loadQuestions() {
-  const container = document.getElementById('questionsList');
+  let muralHTML = '';
 
   const { data, error } = await supabase
     .from('questions')
@@ -81,36 +10,79 @@ async function loadQuestions() {
       student_name,
       question,
       created_at,
-      answer:answer (
-        answer_text
+      answer (
+        content,
+        author_name
       )
     `)
     .order('created_at', { ascending: false });
 
   if (error) {
-    console.error(error);
-    container.innerHTML = '<p>Erro ao carregar perguntas.</p>';
-    return;
+    muralHTML = `<p class="muted">Erro ao carregar perguntas.</p>`;
+  } else if (!data || data.length === 0) {
+    muralHTML = `<p class="muted">Nenhuma dúvida enviada ainda.</p>`;
+  } else {
+    muralHTML = data.map(q => `
+      <div class="question-card">
+        <div class="question">
+          <strong>${q.student_name}</strong>
+          <p>${q.question}</p>
+        </div>
+
+        ${
+          q.answer && q.answer.length
+            ? q.answer.map(a => `
+              <div class="answer">
+                <strong>${a.author_name}</strong>
+                <p>${a.content}</p>
+              </div>
+            `).join('')
+            : `<em class="muted">Aguardando resposta do instrutor</em>`
+        }
+      </div>
+    `).join('');
   }
 
-  if (!data || data.length === 0) {
-    container.innerHTML = '<p>Nenhuma dúvida enviada ainda.</p>';
-    return;
-  }
+  return `
+    <section class="community-page">
+      <div class="card community-form">
+        <h1>💬 Comunidade do Desafio</h1>
+        <p>Envie sua dúvida abaixo. Ela aparecerá no mural.</p>
 
-  container.innerHTML = data.map(q => `
-    <div class="question-card">
-      <strong>${q.student_name}</strong>
-      <p>${q.question}</p>
+        <input id="student_name" placeholder="Seu nome" />
+        <textarea id="question" placeholder="Digite sua dúvida"></textarea>
 
-      ${
-        q.answer && q.answer.length > 0
-          ? `<div class="answer">
-               <span>Resposta:</span>
-               <p>${q.answer[0].answer_text}</p>
-             </div>`
-          : `<em>Aguardando resposta…</em>`
-      }
-    </div>
-  `).join('');
+        <button class="button gold" id="send">Enviar dúvida</button>
+      </div>
+
+      <div class="card">
+        <h2>📌 Mural de Perguntas</h2>
+        ${muralHTML}
+      </div>
+    </section>
+  `;
 }
+
+document.addEventListener('click', async (e) => {
+  if (e.target.id !== 'send') return;
+
+  const name = document.getElementById('student_name').value.trim();
+  const question = document.getElementById('question').value.trim();
+
+  if (!name || !question) {
+    alert('Preencha todos os campos.');
+    return;
+  }
+
+  const { error } = await supabase
+    .from('questions')
+    .insert([{ student_name: name, question }]);
+
+  if (error) {
+    console.error(error);
+    alert('Erro ao enviar dúvida.');
+    return;
+  }
+
+  location.reload();
+});
