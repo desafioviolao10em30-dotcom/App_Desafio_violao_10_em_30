@@ -1,4 +1,4 @@
-function u(){var l,n,d;const i=window.DESAFIO_DATA||{},r=i.modules||[],c=i.songs||[],s=i.mentoria;let a=null;function $(e){a=a===e?null:e,document.getElementById("ebook-view").innerHTML=u()}function v(e){return c.filter(t=>e==="5+"?t.level>=5:t.level===e).map(t=>`
+let n=null;function u(o){n=n===o?null:o;const s=document.getElementById("view");s.innerHTML=p()}window.toggleModule=u;function p(){var a,d,r;const o=window.DESAFIO_DATA||{},s=o.modules||[],c=o.songs||[],l=o.mentoria;function $(e){return c.filter(t=>e==="5+"?t.level>=5:t.level===e).map(t=>`
         <div class="song-card">
           <strong>${t.title}</strong>
           <div class="artist">${t.artist}</div>
@@ -9,27 +9,27 @@ function u(){var l,n,d;const i=window.DESAFIO_DATA||{},r=i.modules||[],c=i.songs
           </div>
         </div>
       `).join("")}return`
-    <section id="ebook-view" class="ebook">
+    <section class="ebook">
 
       <header class="ebook-header">
         <span class="badge">📘 Ebook Interativo</span>
-        <h1>${((l=i.app)==null?void 0:l.title)||"Desafio Violão 10 em 30"}</h1>
-        <p>${((n=i.app)==null?void 0:n.subtitle)||""}</p>
+        <h1>${((a=o.app)==null?void 0:a.title)||"Desafio Violão 10 em 30"}</h1>
+        <p>${((d=o.app)==null?void 0:d.subtitle)||""}</p>
         <button onclick="window.print()">⬇️ Baixar PDF</button>
       </header>
 
       <div class="modules">
-        ${r.map(e=>{var t;return`
+        ${s.map(e=>{var t;return`
           <div class="module">
-            <button class="module-header" onclick="(${$})(${e.id})">
+            <button class="module-header" onclick="window.toggleModule(${e.id})">
               <div>
                 <small>Módulo ${e.id}</small>
                 <strong>${e.title}</strong>
               </div>
-              <span>${a===e.id?"▲":"▼"}</span>
+              <span>${n===e.id?"▲":"▼"}</span>
             </button>
 
-            ${a===e.id?`
+            ${n===e.id?`
                   <div class="module-content">
 
                     ${e.videoUrl?`
@@ -40,13 +40,13 @@ function u(){var l,n,d;const i=window.DESAFIO_DATA||{},r=i.modules||[],c=i.songs
                       <div class="text">${e.content}</div>
                     `:""}
 
-                    ${((t=e.infoBoxes)==null?void 0:t.map(o=>`
+                    ${((t=e.infoBoxes)==null?void 0:t.map(i=>`
                       <div class="info-box">
-                        <h4>${o.title}</h4>
-                        <p>${o.content||""}</p>
-                        ${o.items?`
+                        <h4>${i.title}</h4>
+                        ${i.content?`<p>${i.content}</p>`:""}
+                        ${i.items?`
                           <ul>
-                            ${o.items.map(p=>`<li>${p}</li>`).join("")}
+                            ${i.items.map(v=>`<li>${v}</li>`).join("")}
                           </ul>
                         `:""}
                       </div>
@@ -54,9 +54,9 @@ function u(){var l,n,d;const i=window.DESAFIO_DATA||{},r=i.modules||[],c=i.songs
 
                     ${e.id===5?`
                           <h3>Músicas</h3>
-                          ${[2,3,4,"5+"].map(o=>`
-                            <h4>Nível ${o}</h4>
-                            ${v(o)}
+                          ${[2,3,4,"5+"].map(i=>`
+                            <h4>Nível ${i}</h4>
+                            ${$(i)}
                           `).join("")}
                         `:""}
 
@@ -66,19 +66,19 @@ function u(){var l,n,d;const i=window.DESAFIO_DATA||{},r=i.modules||[],c=i.songs
         `}).join("")}
       </div>
 
-      ${s?`
+      ${l?`
             <section class="mentoria">
-              <h2>${s.title}</h2>
-              <p>${s.description}</p>
-              <a href="${s.ctaUrl}" target="_blank" class="cta">
-                ${s.ctaText}
+              <h2>${l.title}</h2>
+              <p>${l.description}</p>
+              <a href="${l.ctaUrl}" target="_blank" class="cta">
+                ${l.ctaText}
               </a>
             </section>
           `:""}
 
       <footer class="ebook-footer">
-        ${((d=i.app)==null?void 0:d.slogan)||""}
+        ${((r=o.app)==null?void 0:r.slogan)||""}
       </footer>
 
     </section>
-  `}export{u as render};
+  `}export{p as render};
