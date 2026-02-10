@@ -1,30 +1,31 @@
-// router.js
-import React from "react";
-import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
+// router.js (VANILLA HASH ROUTER)
 
-import App from "./app";
-import Home from "./pages/home";
-import Ebook from "./pages/ebook";
-import Comunidade from "./pages/comunidade";
-import Mentoria from "./pages/mentoria";
-import Obrigado from "./pages/obrigado";
+const routes = {
+  '/home': () => import('./pages/home.js'),
+  '/ebook': () => import('./pages/ebook.js'),
+  '/comunidade': () => import('./pages/comunidade.js'),
+  '/mentoria': () => import('./pages/mentoria.js'),
+  '/obrigado': () => import('./pages/obrigado.js'),
+};
 
-export default function Router() {
-  return (
-    <HashRouter>
-      <Routes>
-        <Route element={<App />}>
-          <Route path="/" element={<Navigate to="/home" replace />} />
-          <Route path="/home" element={<Home />} />
-          <Route path="/ebook" element={<Ebook />} />
-          <Route path="/comunidade" element={<Comunidade />} />
-          <Route path="/mentoria" element={<Mentoria />} />
-          <Route path="/obrigado" element={<Obrigado />} />
-        </Route>
+const view = () => document.getElementById('view');
 
-        {/* fallback */}
-        <Route path="*" element={<Navigate to="/home" replace />} />
-      </Routes>
-    </HashRouter>
-  );
+async function loadRoute() {
+  const hash = window.location.hash || '#/home';
+  const path = hash.replace('#', '');
+
+  const loader = routes[path] || routes['/home'];
+
+  try {
+    const page = await loader();
+    view().innerHTML = page.render();
+  } catch (err) {
+    console.error('Erro ao carregar rota:', err);
+    view().innerHTML = `<h2>Erro ao carregar página</h2>`;
+  }
+}
+
+export function initRouter() {
+  window.addEventListener('hashchange', loadRoute);
+  loadRoute(); // inicial
 }
