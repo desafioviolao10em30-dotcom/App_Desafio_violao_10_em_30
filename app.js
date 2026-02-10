@@ -1,6 +1,6 @@
-import { initRouter } from './router.js';
+import { initRouter } from "./router.js";
 
 // Inicializa a aplicação quando o DOM estiver pronto
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener("DOMContentLoaded", () => {
   initRouter();
 });
