@@ -1,139 +1,93 @@
-// pages/comunidade.js
-import { supabaseInsert, supabaseSelect } from "../supabase.js";
+import { supabase } from "../supabase.js";
 
 export function render() {
-  setTimeout(() => {
-    carregarPerguntas();
-    bindForm();
-  }, 0);
+  setTimeout(initCommunity, 0);
 
   return `
-    <section class="card comunidade">
-
+    <section class="card comunidade-card">
       <h1>💬 Comunidade do Desafio</h1>
-      <p class="subtitle">
-        Envie sua dúvida abaixo. Ela aparecerá no mural e será respondida pelo instrutor.
-      </p>
+      <p>Envie sua dúvida abaixo. Ela aparecerá no mural.</p>
 
-      <form id="question-form" class="question-form">
-        <input
-          type="text"
-          id="student_name"
-          placeholder="Seu nome"
-          required
-        />
-
-        <textarea
-          id="question_text"
-          placeholder="Escreva sua dúvida..."
-          rows="4"
-          required
-        ></textarea>
-
-        <button type="submit" class="button primary">
-          Enviar dúvida
-        </button>
-      </form>
-
-      <div class="divider"></div>
-
-      <h2>📌 Mural de Perguntas</h2>
-      <div id="questions-list" class="questions-list">
-        <p class="muted">Carregando perguntas...</p>
+      <div class="form">
+        <input id="student_name" placeholder="Seu nome" />
+        <textarea id="question" placeholder="Digite sua dúvida"></textarea>
+        <button id="send">Enviar dúvida</button>
       </div>
+    </section>
 
+    <section class="card mural-card">
+      <h2>📌 Mural de Perguntas</h2>
+      <div id="mural">Carregando...</div>
     </section>
   `;
 }
 
-/* -------------------------
-   FORM
--------------------------- */
-function bindForm() {
-  const form = document.getElementById("question-form");
-
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    const name = document.getElementById("student_name").value.trim();
-    const question = document.getElementById("question_text").value.trim();
-
-    if (!name || !question) {
-      alert("Preencha todos os campos.");
-      return;
-    }
-
-    try {
-      await supabaseInsert("questions", {
-        student_name: name,
-        question: question,
-      });
-
-      document.getElementById("question_text").value = "";
-      carregarPerguntas();
-    } catch (err) {
-      console.error(err);
-      alert("Erro ao enviar dúvida.");
-    }
-  });
+async function initCommunity() {
+  document.getElementById("send").onclick = sendQuestion;
+  loadQuestions();
 }
 
-/* -------------------------
-   LOAD QUESTIONS
--------------------------- */
-async function carregarPerguntas() {
-  const list = document.getElementById("questions-list");
+async function sendQuestion() {
+  const name = document.getElementById("student_name").value.trim();
+  const question = document.getElementById("question").value.trim();
 
-  try {
-    const questions = await supabaseSelect(
-      "questions",
-      "?select=*,answers(*)&order=created_at.desc"
-    );
-
-    if (!questions.length) {
-      list.innerHTML = `<p class="muted">Nenhuma dúvida enviada ainda.</p>`;
-      return;
-    }
-
-    list.innerHTML = questions
-      .map(
-        (q) => `
-        <div class="question-card">
-          <div class="question">
-            <strong>${escapeHtml(q.student_name)}</strong>
-            <p>${escapeHtml(q.question)}</p>
-          </div>
-
-          ${
-            q.answers?.length
-              ? q.answers
-                  .map(
-                    (a) => `
-                    <div class="answer">
-                      <span>Resposta do instrutor</span>
-                      <p>${escapeHtml(a.content)}</p>
-                    </div>
-                  `
-                  )
-                  .join("")
-              : `<div class="answer pending">Aguardando resposta...</div>`
-          }
-        </div>
-      `
-      )
-      .join("");
-  } catch (err) {
-    console.error(err);
-    list.innerHTML = `<p class="muted">Erro ao carregar perguntas.</p>`;
+  if (!name || !question) {
+    alert("Preencha nome e pergunta.");
+    return;
   }
+
+  const { error } = await supabase
+    .from("questions")
+    .insert([{ student_name: name, question }]);
+
+  if (error) {
+    console.error(error);
+    alert("Erro ao enviar dúvida.");
+    return;
+  }
+
+  document.getElementById("question").value = "";
+  loadQuestions();
 }
 
-/* -------------------------
-   UTILS
--------------------------- */
-function escapeHtml(text) {
-  return text
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;");
+async function loadQuestions() {
+  const mural = document.getElementById("mural");
+
+  const { data, error } = await supabase
+    .from("questions")
+    .select(`
+      id,
+      student_name,
+      question,
+      answer ( answer )
+    `)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error(error);
+    mural.innerHTML = "Erro ao carregar perguntas.";
+    return;
+  }
+
+  if (!data.length) {
+    mural.innerHTML = "Nenhuma dúvida enviada ainda.";
+    return;
+  }
+
+  mural.innerHTML = data
+    .map(
+      (q) => `
+      <div class="question">
+        <strong>${q.student_name}</strong>
+        <p>${q.question}</p>
+
+        ${
+          q.answer?.length
+            ? `<div class="answer">💡 ${q.answer[0].answer}</div>`
+            : `<div class="waiting">⏳ Aguardando resposta</div>`
+        }
+      </div>
+    `
+    )
+    .join("");
 }
