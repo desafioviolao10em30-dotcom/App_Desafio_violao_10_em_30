@@ -49,9 +49,9 @@ export async function afterRender() {
 
     if (!student_name || !question) return;
 
-    const { error } = await supabase.from("questions").insert([
-      { student_name, question }
-    ]);
+    const { error } = await supabase
+      .from("questions")
+      .insert([{ student_name, question }]);
 
     if (error) {
       alert("Erro ao enviar dúvida.");
@@ -68,17 +68,10 @@ export async function afterRender() {
   async function carregarPerguntas() {
     mural.innerHTML = "Carregando perguntas...";
 
-    const { data, error } = await supabase
+    // 1️⃣ Buscar perguntas
+    const { data: perguntas, error } = await supabase
       .from("questions")
-      .select(`
-        id,
-        student_name,
-        question,
-        created_at,
-        answer (
-          answer
-        )
-      `)
+      .select("*")
       .order("created_at", { ascending: false });
 
     if (error) {
@@ -87,32 +80,44 @@ export async function afterRender() {
       return;
     }
 
-    if (!data.length) {
+    if (!perguntas.length) {
       mural.innerHTML = "Nenhuma dúvida enviada ainda.";
       return;
     }
 
-    mural.innerHTML = data
-      .map((q) => {
-        const resposta =
-          Array.isArray(q.answer) && q.answer.length
-            ? `
-              <div class="answer">
-                <strong>Resposta do instrutor:</strong>
-                <p>${q.answer[0].answer}</p>
-              </div>
-            `
-            : `
-              <div class="answer pending">
-                Aguardando resposta…
-              </div>
-            `;
+    // 2️⃣ Buscar respostas separadamente
+    const ids = perguntas.map((p) => p.id);
+
+    const { data: respostas } = await supabase
+      .from("answer")
+      .select("*")
+      .in("id_da_pergunta", ids);
+
+    mural.innerHTML = perguntas
+      .map((p) => {
+        const resposta = respostas?.find(
+          (r) => r.id_da_pergunta === p.id
+        );
 
         return `
           <div class="question-card">
-            <strong>${q.student_name}</strong>
-            <p>${q.question}</p>
-            ${resposta}
+            <strong>${p.student_name}</strong>
+            <p>${p.question}</p>
+
+            ${
+              resposta
+                ? `
+                  <div class="answer">
+                    <strong>Resposta do instrutor:</strong>
+                    <p>${resposta.answer}</p>
+                  </div>
+                `
+                : `
+                  <div class="answer pending">
+                    Aguardando resposta…
+                  </div>
+                `
+            }
           </div>
         `;
       })
