@@ -28,11 +28,13 @@ async function loadRoute() {
   showLoading();
 
   try {
-    const page = await pageLoader();
-    view().innerHTML = page.render();
-  } catch (err) {
-    console.error(err);
-    view().innerHTML = `<h2>Erro ao carregar página</h2>`;
+    const page = await loader();
+view().innerHTML = await page.render();
+
+if (page.afterRender) {
+  await page.afterRender();
+}
+
   }
 
   hideLoading();
