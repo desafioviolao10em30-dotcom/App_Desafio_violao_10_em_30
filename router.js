@@ -1,4 +1,4 @@
-// router.js (VANILLA HASH ROUTER + LOADING)
+// router.js (VANILLA HASH ROUTER - SUPORTA ASYNC)
 
 const routes = {
   '/home': () => import('./pages/home.js'),
@@ -9,35 +9,27 @@ const routes = {
 };
 
 const view = () => document.getElementById('view');
-const loader = () => document.getElementById('app-loading');
-
-function showLoading() {
-  loader().classList.remove('hidden');
-}
-
-function hideLoading() {
-  setTimeout(() => loader().classList.add('hidden'), 250);
-}
 
 async function loadRoute() {
   const hash = window.location.hash || '#/home';
   const path = hash.replace('#', '');
 
-  const pageLoader = routes[path] || routes['/home'];
-
-  showLoading();
+  const loader = routes[path] || routes['/home'];
 
   try {
     const page = await loader();
-view().innerHTML = await page.render();
 
-if (page.afterRender) {
-  await page.afterRender();
-}
+    // 🔥 AQUI ESTÁ A CORREÇÃO
+    if (page.render.constructor.name === 'AsyncFunction') {
+      view().innerHTML = await page.render();
+    } else {
+      view().innerHTML = page.render();
+    }
 
+  } catch (err) {
+    console.error('Erro ao carregar rota:', err);
+    view().innerHTML = `<h2>Erro ao carregar página</h2>`;
   }
-
-  hideLoading();
 }
 
 export function initRouter() {
