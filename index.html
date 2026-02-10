@@ -4,24 +4,28 @@
   <meta charset="UTF-8" />
   <title>Desafio Violão 10 em 30</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- CSS -->
   <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
-
-  <!-- LOADING GLOBAL -->
-  <div id="app-loading" class="app-loading hidden">
-    <div class="spinner"></div>
-  </div>
-
   <div id="app">
     <!-- Header fixo -->
     <header class="app-header">
-      <div class="logo">🎸 Desafio Violão</div>
-      <nav>
-        <a href="#/home">Início</a>
-        <a href="#/ebook">Ebook</a>
-        <a href="#/comunidade">Comunidade</a>
-        <a href="#/mentoria" class="cta">Mentoria</a>
+      <div class="brand">
+        <div class="brand-icon">🎸</div>
+        <div class="brand-text">
+          <div class="brand-title">DESAFIO VIOLÃO</div>
+          <div class="brand-subtitle">10 em 30</div>
+        </div>
+      </div>
+
+      <nav class="app-nav">
+        <a href="#/home" data-route="/home">Início</a>
+        <a href="#/ebook" data-route="/ebook">Ebook</a>
+        <a href="#/comunidade" data-route="/comunidade">Comunidade</a>
+        <a href="#/mentoria" data-route="/mentoria" class="cta">Mentoria</a>
       </nav>
     </header>
 
@@ -29,8 +33,13 @@
     <main id="view" class="view"></main>
   </div>
 
+  <!-- DADOS ESTÁTICOS (ebook) -->
   <script src="data/desafio.js"></script>
-  <script type="module" src="router.js"></script>
+
+  <!-- Supabase via CDN (não precisa node) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- App em módulos -->
   <script type="module" src="app.js"></script>
 </body>
 </html>
