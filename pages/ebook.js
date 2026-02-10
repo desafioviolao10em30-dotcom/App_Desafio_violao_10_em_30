@@ -1,26 +1,28 @@
 // pages/ebook.js
 
-let activeModule = null;
-
-function toggleModule(id) {
-  activeModule = activeModule === id ? null : id;
-  const view = document.getElementById("view");
-  view.innerHTML = render();
-}
-
-// expõe no escopo global
-window.toggleModule = toggleModule;
-
 export function render() {
   const data = window.DESAFIO_DATA || {};
-
   const modules = data.modules || [];
   const songs = data.songs || [];
   const mentoria = data.mentoria;
 
+  let activeModule = localStorage.getItem("ebookActiveModule");
+
+  function toggleModule(id) {
+    activeModule = activeModule === String(id) ? null : String(id);
+
+    if (activeModule) {
+      localStorage.setItem("ebookActiveModule", activeModule);
+    } else {
+      localStorage.removeItem("ebookActiveModule");
+    }
+
+    document.getElementById("ebook-view").innerHTML = render();
+  }
+
   function renderSongs(level) {
     return songs
-      .filter(s => (level === "5+" ? s.level >= 5 : s.level === level))
+      .filter(s => level === "5+" ? s.level >= 5 : s.level === level)
       .map(song => `
         <div class="song-card">
           <strong>${song.title}</strong>
@@ -36,7 +38,7 @@ export function render() {
   }
 
   return `
-    <section class="ebook">
+    <section id="ebook-view" class="ebook">
 
       <header class="ebook-header">
         <span class="badge">📘 Ebook Interativo</span>
@@ -48,35 +50,29 @@ export function render() {
       <div class="modules">
         ${modules.map(m => `
           <div class="module">
-            <button class="module-header" onclick="window.toggleModule(${m.id})">
+            <button class="module-header" onclick="(${toggleModule})(${m.id})">
               <div>
                 <small>Módulo ${m.id}</small>
                 <strong>${m.title}</strong>
               </div>
-              <span>${activeModule === m.id ? "▲" : "▼"}</span>
+              <span>${activeModule == m.id ? "▲" : "▼"}</span>
             </button>
 
             ${
-              activeModule === m.id
+              activeModule == m.id
                 ? `
                   <div class="module-content">
 
-                    ${m.videoUrl ? `
-                      <iframe src="${m.videoUrl}" allowfullscreen></iframe>
-                    ` : ""}
+                    ${m.videoUrl ? `<iframe src="${m.videoUrl}" allowfullscreen></iframe>` : ""}
 
-                    ${m.content ? `
-                      <div class="text">${m.content}</div>
-                    ` : ""}
+                    ${m.content ? `<div class="text">${m.content}</div>` : ""}
 
                     ${m.infoBoxes?.map(box => `
                       <div class="info-box">
                         <h4>${box.title}</h4>
                         ${box.content ? `<p>${box.content}</p>` : ""}
                         ${box.items ? `
-                          <ul>
-                            ${box.items.map(i => `<li>${i}</li>`).join("")}
-                          </ul>
+                          <ul>${box.items.map(i => `<li>${i}</li>`).join("")}</ul>
                         ` : ""}
                       </div>
                     `).join("") || ""}
