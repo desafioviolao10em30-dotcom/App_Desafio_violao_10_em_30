@@ -9,7 +9,13 @@
 </head>
 <body>
 
+  <!-- LOADING GLOBAL -->
+  <div id="app-loading" class="app-loading hidden">
+    <div class="spinner"></div>
+  </div>
+
   <div id="app">
+    <!-- Header fixo -->
     <header class="app-header">
       <div class="logo">🎸 Desafio Violão</div>
       <nav>
@@ -20,9 +26,10 @@
       </nav>
     </header>
 
+    <!-- Conteúdo dinâmico -->
     <main id="view" class="view"></main>
   </div>
 
-  <!-- IMPORTANTE: APENAS ESSE SCRIPT -->
+  <script src="data/desafio.js"></script>
 </body>
 </html>
