@@ -1,118 +1,121 @@
-// pages/comunidade.js
 import { supabase } from "../supabase.js";
 
 export function render() {
-  setTimeout(initComunidade, 0);
-
   return `
-    <section class="card comunidade-card">
+    <section class="comunidade-card">
       <h1>💬 Comunidade do Desafio</h1>
       <p class="subtitle">
-        Este é o mural oficial de dúvidas do curso.
+        Este é o mural oficial de dúvidas do curso. Envie sua pergunta abaixo.
       </p>
 
-      <div class="form">
+      <form id="form-duvida" class="form">
         <input
-          id="student_name"
           type="text"
+          id="student_name"
           placeholder="Seu nome"
+          required
           class="input"
         />
 
         <textarea
           id="question"
           placeholder="Digite sua dúvida"
+          required
           class="textarea"
         ></textarea>
 
-        <button id="sendQuestion" class="button primary">
+        <button type="submit" class="button primary">
           Enviar dúvida
         </button>
-      </div>
+      </form>
     </section>
 
-    <section class="card mural-card">
+    <section class="mural-card">
       <h2>📌 Mural de Perguntas</h2>
       <div id="mural">Carregando perguntas...</div>
     </section>
   `;
 }
 
-function initComunidade() {
-  document
-    .getElementById("sendQuestion")
-    .addEventListener("click", enviarPergunta);
-
-  carregarPerguntas();
-}
-
-async function enviarPergunta() {
-  const name = document.getElementById("student_name").value.trim();
-  const question = document.getElementById("question").value.trim();
-
-  if (!name || !question) {
-    alert("Preencha nome e dúvida.");
-    return;
-  }
-
-  const { error } = await supabase
-    .from("questions")
-    .insert([{ student_name: name, question }]);
-
-  if (error) {
-    console.error(error);
-    alert("Erro ao enviar dúvida.");
-    return;
-  }
-
-  document.getElementById("question").value = "";
-  carregarPerguntas();
-}
-
-async function carregarPerguntas() {
+export async function afterRender() {
+  const form = document.getElementById("form-duvida");
   const mural = document.getElementById("mural");
 
-  const { data, error } = await supabase
-    .from("questions")
-    .select(`
-      id,
-      student_name,
-      question,
-      created_at,
-      answer (
-        answer
-      )
-    `)
-    .order("created_at", { ascending: false });
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-  if (error) {
-    console.error(error);
-    mural.innerHTML = "<p>Erro ao carregar perguntas.</p>";
-    return;
+    const student_name = document.getElementById("student_name").value.trim();
+    const question = document.getElementById("question").value.trim();
+
+    if (!student_name || !question) return;
+
+    const { error } = await supabase.from("questions").insert([
+      { student_name, question }
+    ]);
+
+    if (error) {
+      alert("Erro ao enviar dúvida.");
+      console.error(error);
+      return;
+    }
+
+    form.reset();
+    carregarPerguntas();
+  });
+
+  carregarPerguntas();
+
+  async function carregarPerguntas() {
+    mural.innerHTML = "Carregando perguntas...";
+
+    const { data, error } = await supabase
+      .from("questions")
+      .select(`
+        id,
+        student_name,
+        question,
+        created_at,
+        answer (
+          answer
+        )
+      `)
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      mural.innerHTML = "Erro ao carregar perguntas.";
+      console.error(error);
+      return;
+    }
+
+    if (!data.length) {
+      mural.innerHTML = "Nenhuma dúvida enviada ainda.";
+      return;
+    }
+
+    mural.innerHTML = data
+      .map((q) => {
+        const resposta =
+          Array.isArray(q.answer) && q.answer.length
+            ? `
+              <div class="answer">
+                <strong>Resposta do instrutor:</strong>
+                <p>${q.answer[0].answer}</p>
+              </div>
+            `
+            : `
+              <div class="answer pending">
+                Aguardando resposta…
+              </div>
+            `;
+
+        return `
+          <div class="question-card">
+            <strong>${q.student_name}</strong>
+            <p>${q.question}</p>
+            ${resposta}
+          </div>
+        `;
+      })
+      .join("");
   }
-
-  if (!data.length) {
-    mural.innerHTML = "<p>Nenhuma dúvida enviada ainda.</p>";
-    return;
-  }
-
-  mural.innerHTML = data
-    .map(
-      (q) => `
-      <div class="question-card">
-        <strong>${q.student_name}</strong>
-        <p>${q.question}</p>
-
-        ${
-          q.answer
-            ? `<div class="answer">
-                <strong>Resposta:</strong>
-                <p>${q.answer.answer}</p>
-              </div>`
-            : `<div class="answer pending">Aguardando resposta…</div>`
-        }
-      </div>
-    `
-    )
-    .join("");
 }
