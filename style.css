@@ -276,3 +276,107 @@ textarea::placeholder {
   font-size: 15px;
   line-height: 1.55;
 }
+/* ============================= */
+/* CARD DE PERGUNTA */
+/* ============================= */
+
+.question-card {
+  background: linear-gradient(180deg, #3a155f, #2a0f44);
+  border-radius: 20px;
+  padding: 20px 22px;
+  margin-bottom: 18px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+/* Cabeçalho do card */
+.question-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.question-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.question-author {
+  font-weight: 800;
+  font-size: 15px;
+  color: #ffffff;
+}
+
+.question-date {
+  font-size: 12px;
+  color: rgba(255,255,255,0.65);
+}
+
+/* Ícone accordion */
+.question-toggle {
+  font-size: 20px;
+  color: #f5c542;
+  transition: transform 0.25s ease;
+}
+
+.question-card.open .question-toggle {
+  transform: rotate(180deg);
+}
+
+/* Texto da pergunta */
+.question-text {
+  margin-top: 14px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #f2e9ff;
+}
+
+/* ============================= */
+/* RESPOSTAS (ACCORDION) */
+/* ============================= */
+
+.answers {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  display: none;
+}
+
+.question-card.open .answers {
+  display: block;
+}
+
+/* Resposta individual */
+.answer-card {
+  background: rgba(0,0,0,0.25);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+}
+
+.answer-author {
+  font-weight: 800;
+  font-size: 14px;
+  color: #4ade80; /* verde instrutor */
+}
+
+.answer-date {
+  font-size: 12px;
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 6px;
+}
+
+.answer-text {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #ffffff;
+}
+
+/* Sem respostas */
+.no-answers {
+  font-size: 13px;
+  color: rgba(255,255,255,0.6);
+  font-style: italic;
+}
