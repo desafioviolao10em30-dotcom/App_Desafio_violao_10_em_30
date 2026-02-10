@@ -1,28 +1,30 @@
-const routes = {};
+// router.js
+import React from "react";
+import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
 
-function registerRoute(path, renderFn) {
-  routes[path] = renderFn;
+import App from "./app";
+import Home from "./pages/home";
+import Ebook from "./pages/ebook";
+import Comunidade from "./pages/comunidade";
+import Mentoria from "./pages/mentoria";
+import Obrigado from "./pages/obrigado";
+
+export default function Router() {
+  return (
+    <HashRouter>
+      <Routes>
+        <Route element={<App />}>
+          <Route path="/" element={<Navigate to="/home" replace />} />
+          <Route path="/home" element={<Home />} />
+          <Route path="/ebook" element={<Ebook />} />
+          <Route path="/comunidade" element={<Comunidade />} />
+          <Route path="/mentoria" element={<Mentoria />} />
+          <Route path="/obrigado" element={<Obrigado />} />
+        </Route>
+
+        {/* fallback */}
+        <Route path="*" element={<Navigate to="/home" replace />} />
+      </Routes>
+    </HashRouter>
+  );
 }
-
-function router() {
-  const hash = location.hash || '#/home';
-  const route = hash.replace('#', '');
-
-  const view = document.getElementById('view');
-  view.innerHTML = '';
-
-  if (routes[route]) {
-    view.innerHTML = routes[route]();
-  } else {
-    view.innerHTML = `
-      <div class="card">
-        <h2>Página não encontrada</h2>
-        <a href="#/home" class="button">Voltar</a>
-      </div>
-    `;
-  }
-}
-
-window.addEventListener('hashchange', router);
-window.addEventListener('load', router);
-
