@@ -1,108 +1,77 @@
-import { supabase } from "../supabase.js";
+import { supabase } from "./supabase.js";
 
-export function render() {
-  return `
-    <section class="page-wrap">
-
-      <div class="card">
-        <h1 class="title-xl""gold-title">💬 Comunidade do Desafio</h1>
-        <p class="muted">
-          Envie sua dúvida abaixo. Ela aparecerá no mural e será respondida pelo instrutor.
-        </p>
-
-        <input
-          id="studentName"
-          class="input"
-          placeholder="Seu nome"
-          value="Aluno"
-        />
-
-        <textarea
-          id="questionText"
-          class="textarea"
-          placeholder="Digite sua dúvida..."
-        ></textarea>
-
-        <button id="sendQuestion" class="btn btn-yellow""btn-gold">
-          Enviar dúvida
-        </button>
-      </div>
-
-      <div class="card" style="margin-top:24px;">
-        <h2 class="gold-title">📌Mural de Perguntas</h2>
-        <div id="questionsList" class="questions-list">
-          <p class="muted">Carregando perguntas...</p>
-        </div>
-      </div>
-
-    </section>
-  `;
-}
-
-export function mount() {
-  document
-    .getElementById("sendQuestion")
-    .addEventListener("click", sendQuestion);
-
-  loadQuestions();
-}
-
-async function sendQuestion() {
-  const name = document.getElementById("studentName").value.trim();
-  const text = document.getElementById("questionText").value.trim();
-
-  if (!text) {
-    alert("Digite sua dúvida.");
-    return;
-  }
-
-  const { error } = await supabase.from("questions").insert([
-    {
-      student_name: name || "Aluno",
-      question: text,
-    },
-  ]);
-
-  if (error) {
-    console.error(error);
-    alert("Erro ao enviar dúvida.");
-    return;
-  }
-
-  document.getElementById("questionText").value = "";
-  loadQuestions();
-}
+const list = document.getElementById("questions-list");
 
 async function loadQuestions() {
-  const list = document.getElementById("questionsList");
-
-  const { data, error } = await supabase
+  const { data: questions, error } = await supabase
     .from("questions")
-    .select("student_name, question, created_at")
+    .select(`
+      id,
+      question,
+      student_name,
+      created_at,
+      answer (
+        id,
+        answer,
+        created_at
+      )
+    `)
     .order("created_at", { ascending: false });
 
   if (error) {
-    console.error(error);
-    list.innerHTML = "<p class='muted'>Erro ao carregar perguntas.</p>";
+    list.innerHTML = "<p>Erro ao carregar perguntas.</p>";
     return;
   }
 
-  if (!data.length) {
-    list.innerHTML = "<p class='muted'>Nenhuma dúvida enviada ainda.</p>";
-    return;
-  }
-
-  list.innerHTML = data
-    .map(
-      (q) => `
-        <div class="question-item">
-          <strong>${q.student_name || "Aluno"}</strong>
-          <span class="date">
-            ${new Date(q.created_at).toLocaleDateString("pt-BR")}
-          </span>
-          <p>${q.question}</p>
-        </div>
-      `
-    )
-    .join("");
+  list.innerHTML = questions.map(renderQuestion).join("");
 }
+
+function renderQuestion(q) {
+  const date = new Date(q.created_at).toLocaleDateString("pt-BR");
+
+  return `
+    <div class="question-card" data-id="${q.id}">
+      <div class="question-header" onclick="toggleQuestion('${q.id}')">
+        <div class="question-meta">
+          <span class="question-author">${q.student_name || "Aluno"}</span>
+          <span class="question-date">${date}</span>
+        </div>
+        <span class="question-toggle">▾</span>
+      </div>
+
+      <div class="question-text">
+        ${q.question}
+      </div>
+
+      <div class="answers">
+        ${
+          q.answer && q.answer.length
+            ? q.answer.map(renderAnswer).join("")
+            : `<div class="no-answers">Ainda sem respostas.</div>`
+        }
+      </div>
+    </div>
+  `;
+}
+
+function renderAnswer(a) {
+  const date = new Date(a.created_at).toLocaleDateString("pt-BR");
+
+  return `
+    <div class="answer-card">
+      <div class="answer-author">Instrutor</div>
+      <div class="answer-date">${date}</div>
+      <div class="answer-text">${a.answer}</div>
+    </div>
+  `;
+}
+
+/* Accordion */
+window.toggleQuestion = function (id) {
+  const card = document.querySelector(
+    `.question-card[data-id="${id}"]`
+  );
+  card.classList.toggle("open");
+};
+
+loadQuestions();
