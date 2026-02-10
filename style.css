@@ -1,110 +1,205 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+/* =========================
+   VARIÁVEIS DE TEMA
+========================= */
+:root {
+  --bg-main: #2a0b52;
+  --bg-gradient: linear-gradient(180deg, #3b0f73 0%, #1b0636 100%);
+  --card: #3a0f6e;
+  --card-soft: #4b178a;
+  --primary: #22c55e;
+  --gold: #facc15;
+  --text: #f8fafc;
+  --muted: #d8b4fe;
+}
+
+/* =========================
+   RESET GLOBAL
+========================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* =========================
+   FUNDO DA APLICAÇÃO (FIX!)
+========================= */
+html, body {
+  width: 100%;
+  min-height: 100%;
+  background: var(--bg-gradient);
+  font-family: 'Inter', system-ui, sans-serif;
+  color: var(--text);
+}
+
+/* ROOT DA SPA (CRÍTICO) */
+#app,
+.app,
+.view,
+main {
+  min-height: 100vh;
+  background: transparent;
+}
+
+/* =========================
+   HEADER
+========================= */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: rgba(27, 6, 54, 0.85);
+  backdrop-filter: blur(14px);
+  padding: 16px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.logo {
+  font-weight: 800;
+  font-size: 18px;
+  color: var(--gold);
+}
+
+nav a {
+  margin-left: 18px;
+  text-decoration: none;
+  color: var(--text);
+  font-weight: 600;
+  opacity: .85;
+}
+
+nav a:hover {
+  opacity: 1;
+}
+
+nav .cta {
+  background: linear-gradient(90deg, var(--primary), #16a34a);
+  padding: 8px 16px;
+  border-radius: 12px;
+  color: #052e16;
+  font-weight: 800;
+}
+
+/* =========================
+   LAYOUT
+========================= */
+.view {
+  display: flex;
+  justify-content: center;
+  padding: 48px 16px 80px;
+}
+
 .page-wrap {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 40px 20px;
+  width: 100%;
+  max-width: 920px;
+  display: grid;
+  gap: 28px;
 }
 
+/* =========================
+   CARDS
+========================= */
 .card {
-  background: linear-gradient(145deg, #2a0a4d, #140022);
-  border-radius: 18px;
+  background: linear-gradient(180deg, var(--card), #24094d);
+  border-radius: 22px;
   padding: 28px;
-  margin-bottom: 24px;
-  box-shadow: 0 20px 40px rgba(0,0,0,.35);
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 30px 60px rgba(0,0,0,.45);
 }
 
-.card--highlight {
-  border: 1px solid rgba(255,255,255,.08);
-}
-
-.title-xl {
+.card h1 {
   font-size: 32px;
+  font-weight: 800;
   margin-bottom: 8px;
 }
 
-.title-md {
-  font-size: 22px;
-  margin-bottom: 12px;
+.card h2 {
+  font-size: 24px;
+  font-weight: 800;
+  margin-bottom: 14px;
 }
 
-.muted {
-  opacity: .8;
-  margin-bottom: 16px;
+.card p {
+  color: var(--muted);
+  line-height: 1.6;
+  margin-bottom: 18px;
 }
 
-.input,
-.textarea {
+/* =========================
+   FORMULÁRIOS
+========================= */
+input,
+textarea {
   width: 100%;
-  background: rgba(255,255,255,.06);
-  border: 1px solid rgba(255,255,255,.12);
-  border-radius: 12px;
-  padding: 14px;
-  color: #fff;
-  margin-bottom: 12px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 14px;
+  padding: 14px 16px;
+  color: var(--text);
+  font-size: 15px;
+  font-family: 'Inter', sans-serif;
 }
 
-.textarea {
+textarea {
   min-height: 120px;
   resize: vertical;
 }
 
-.btn-yellow {
-  background: #facc15;
-  color: #000;
-  font-weight: 800;
+input::placeholder,
+textarea::placeholder {
+  color: #c4b5fd;
+}
+
+/* =========================
+   BOTÕES
+========================= */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 14px 22px;
-  border-radius: 999px;
-  cursor: pointer;
-}
-
-.questions-list {
-  display: grid;
-  gap: 14px;
-}
-
-.question-card {
-  background: rgba(255,255,255,.05);
-  padding: 16px;
   border-radius: 14px;
+  font-weight: 800;
+  font-size: 15px;
+  cursor: pointer;
+  border: none;
 }
 
-.question-header {
+.btn-primary {
+  background: linear-gradient(90deg, var(--gold), #fde047);
+  color: #422006;
+}
+
+.btn-primary:hover {
+  filter: brightness(1.05);
+}
+
+/* =========================
+   MURAL
+========================= */
+.mural-item {
+  background: linear-gradient(180deg, var(--card-soft), var(--card));
+  border-radius: 18px;
+  padding: 18px 20px;
+  margin-bottom: 16px;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.mural-header {
   display: flex;
   justify-content: space-between;
-  font-size: 14px;
-  opacity: .85;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--muted);
   margin-bottom: 6px;
 }
-.questions-list {
-  display: grid;
-  gap: 16px;
-}
 
-.question-item {
-  background: rgba(255,255,255,0.05);
-  padding: 16px;
-  border-radius: 12px;
-}
-
-.question-item .date {
-  display: block;
-  font-size: 12px;
-  opacity: 0.7;
-  margin-bottom: 6px;
-}
-.questions-list {
-  display: grid;
-  gap: 16px;
-}
-
-.question-item {
-  background: rgba(255,255,255,0.05);
-  padding: 16px;
-  border-radius: 12px;
-}
-
-.question-item .date {
-  display: block;
-  font-size: 12px;
-  opacity: 0.7;
-  margin-bottom: 6px;
+.mural-question {
+  font-size: 15px;
+  line-height: 1.55;
 }
