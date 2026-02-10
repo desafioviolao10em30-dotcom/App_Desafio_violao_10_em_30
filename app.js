@@ -1,5 +1,6 @@
-import('./pages/home.js');
-import('./pages/ebook.js');
-import('./pages/comunidade.js');
-import('./pages/mentoria.js');
-import('./pages/obrigado.js');
+import { initRouter } from './router.js';
+
+// Inicializa a aplicação quando o DOM estiver pronto
+window.addEventListener('DOMContentLoaded', () => {
+  initRouter();
+});
