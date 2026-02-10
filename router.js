@@ -6,6 +6,9 @@ const routes = {
   "/comunidade": () => import("./pages/comunidade.js"),
   "/mentoria": () => import("./pages/mentoria.js"),
   "/obrigado": () => import("./pages/obrigado.js"),
+  "/admin": () => import("./pages/admin.js"),
+  
+  
   import { render as adminRender, mount as adminMount } from "./pages/admin.js";
 
 registerRoute("/admin", adminRender, adminMount);
