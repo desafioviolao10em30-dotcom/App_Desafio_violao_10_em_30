@@ -3,5 +3,5 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  base: '/NOME-DO-REPOSITORIO/',
+  base: '/App_Desafio_violao_10_em_30/'
 })
