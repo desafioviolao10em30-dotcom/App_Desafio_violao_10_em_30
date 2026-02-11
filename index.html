@@ -2,46 +2,35 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>Desafio Violão 10 em 30</title>
 
-    <!-- Fonte moderna -->
+    <!-- Fonte moderna (elegante) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap"
       rel="stylesheet"
     />
 
     <!-- Estilos globais -->
     <style>
-      :root {
-        --roxo-escuro: #1a052d;
-        --roxo-medio: #3a0b63;
-        --roxo-card: #2a0845;
-        --dourado: linear-gradient(135deg, #f5d76e, #d4af37, #b8962e);
-        --verde: #22c55e;
-        --branco: #ffffff;
-        --texto: #e9e9f0;
-      }
-
       * {
         box-sizing: border-box;
+        margin: 0;
+        padding: 0;
       }
 
       body {
-        margin: 0;
-        font-family: "Inter", sans-serif;
+        font-family: "Poppins", sans-serif;
         background: radial-gradient(
           circle at top,
-          #4b1176,
-          var(--roxo-escuro)
+          #4b167a 0%,
+          #2a063f 45%,
+          #14001f 100%
         );
-        color: var(--texto);
+        color: #ffffff;
         min-height: 100vh;
       }
 
@@ -50,42 +39,53 @@
         text-decoration: none;
       }
 
+      /* Header */
       header {
-        padding: 18px 32px;
+        padding: 20px 40px;
         display: flex;
-        justify-content: space-between;
         align-items: center;
+        justify-content: space-between;
         background: linear-gradient(
-          180deg,
+          to right,
           rgba(0, 0, 0, 0.35),
-          rgba(0, 0, 0, 0)
+          rgba(0, 0, 0, 0.15)
         );
+        backdrop-filter: blur(10px);
       }
 
-      header strong {
-        font-size: 18px;
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 800;
+      }
+
+      .logo span {
+        font-size: 14px;
+        font-weight: 600;
+        color: #ffd54a;
       }
 
       nav {
         display: flex;
-        gap: 16px;
+        gap: 18px;
       }
 
       nav a {
-        padding: 8px 14px;
-        border-radius: 10px;
+        padding: 10px 16px;
+        border-radius: 14px;
         font-weight: 600;
-        opacity: 0.85;
+        background: rgba(255, 255, 255, 0.08);
+        transition: all 0.2s ease;
       }
 
-      nav a.active,
       nav a:hover {
-        background: rgba(255, 255, 255, 0.12);
-        opacity: 1;
+        background: rgba(255, 255, 255, 0.18);
       }
 
-      main {
-        padding: 40px 20px;
+      /* App container */
+      #app {
+        padding: 40px 20px 80px;
         max-width: 1100px;
         margin: 0 auto;
       }
@@ -94,25 +94,25 @@
 
   <body>
     <header>
-      <strong>🎸 Desafio Violão 10 em 30</strong>
+      <div class="logo">
+        🎸 Desafio Violão
+        <span>10 em 30</span>
+      </div>
 
       <nav>
-        <a href="#/home">Início</a>
+        <a href="#/inicio">Início</a>
         <a href="#/ebook">Ebook</a>
         <a href="#/comunidade">Comunidade</a>
         <a href="#/mentoria">Mentoria</a>
+        <a href="#/admin">Admin</a>
       </nav>
     </header>
 
-    <!-- APP -->
-    <main id="app">
-      <!-- conteúdo renderizado pelo router -->
-    </main>
+    <!-- Onde as páginas são renderizadas -->
+    <main id="app"></main>
 
-    <!-- ⚠️ IMPORTANTE -->
-    <!-- AQUI IMPORTAMOS O ARQUIVO REAL DO SEU PROJETO -->
-    <!-- NÃO USE /main.js SE ELE NÃO EXISTE -->
-
-    <script type="module" src="./router.js"></script>
+    <!-- ⚠️ PONTO CRÍTICO DO VITE -->
+    <!-- ESTE ARQUIVO PRECISA EXISTIR -->
+    <script type="module" src="/main.js"></script>
   </body>
 </html>
